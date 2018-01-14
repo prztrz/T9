@@ -1,0 +1,179 @@
+$font: 'Jura', sans-serif;
+$tablet-width: (min-width: 768px);
+$laptop-width: (min-width: 1280px);
+
+$colors: (
+    header-bg: #242E2F,
+    header-font: #fff,
+    main-bg: #e6e5e4,
+    secondary-bg: #6e7170,
+    main-font: #fff,
+);
+
+@mixin sr-only {
+    @media only speech {
+      @content;
+    }
+  }
+
+@mixin tablet {
+    @media #{$tablet-width} {
+        @content;
+    }
+}
+
+@mixin desktop {
+    @media #{$laptop-width} {
+        @content;
+    }
+}
+
+.visuallyhidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    -webkit-clip-path: inset(50%);
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    white-space: nowrap;
+    
+
+    @include sr-only {
+        clip: initial;
+        width: initial;
+        overflow: visible;
+        -webkit-clip-path: initial;
+        clip-path: initial;
+    }
+}
+
+.align-items-center {
+    align-items: center !important;
+}
+
+.justify-content-center{
+    justify-content: center !important;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+
+    .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: $font;
+    margin: 0;
+}
+
+.pageHeader {
+    background-color: map-get($colors, header-bg)
+}
+
+.pageHeader__logo {
+    color: #fff;
+    font-size: 2.5rem;
+    text-align:center;
+    margin: 2rem auto;
+}
+.mainSection {
+    background-color: map-get($colors, main-bg);
+}
+
+.textConventer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 0;
+    margin: 0 1rem;
+}
+
+.textConventer__output {
+    width: 100%;
+}
+
+.textConventer__control{
+    width:100%;
+    margin-top: 1rem;
+    display: flex;
+}
+
+.textConventer__suggestions {
+    width:47.5%;
+    border: 1px solid black;
+    width: 47.5%;
+    border: 1px solid map-get($colors, header-bg);
+    border-radius: 20px;
+    background-color: #fff;
+    padding: 10px 10px;
+    overflow: auto;
+}
+
+.textConventer__suggestion {
+    text-align: center;   
+}
+
+.textConventer__suggestion--active {
+    background-color: #ff7f50;   
+    &:focus {
+        outline: 1px solid map-get($colors, header-bg)
+    }
+}
+
+.textConventer__keyboard {
+    width: 47.5%;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    background-color: map-get($colors, secondary-bg);
+    padding: 1rem;
+    border-radius: 20px;
+    margin-right: 5%;
+    
+}
+
+.textConventer__keyboardBtn {
+    width: 26%;
+    height: 64px;
+    padding: 10px 0;
+    background-color: map-get($colors, header-bg);
+    margin-top: 1rem;
+    border-radius: 10px;
+    font-size: 1.5rem;
+    color: map-get($colors, main-font);
+    box-shadow: -2px -2px 0px 0px #dddddd;
+    border: none;
+
+    &:active {
+        box-shadow: none;
+    }
+
+    small {
+        display:block;
+        font-size: 0.8rem;
+    }
+}
+
+.textConventer__input {
+    resize: none;
+    font-size: 2rem;
+    width: 100%;
+    border: 1px solid map-get($colors, header-bg);
+    height: 170px;
+    padding: 20px;
+    border-radius: 20px;
+}
