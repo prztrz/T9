@@ -1,0 +1,17 @@
+@mixin sr-only {
+    @media only speech {
+      @content;
+    }
+  }
+
+@mixin tablet {
+    @media #{$tablet-width} {
+        @content;
+    }
+}
+
+@mixin desktop {
+    @media #{$laptop-width} {
+        @content;
+    }
+}
