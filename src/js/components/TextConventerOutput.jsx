@@ -24,7 +24,7 @@ class TextConventerOutput extends React.Component {
 
     getSpaces = () => {
        let input = this.state.numericInput;
-       const spaces = []; 
+       const spaces = [0]; 
        for (let i=0; i<input.length; i++){
             if (input[i]==="0") {
                 spaces.push(i)
@@ -36,26 +36,50 @@ class TextConventerOutput extends React.Component {
 
     handleKeyDown = e => {
         console.log(e.key,e.target.selectionStart, e.target.selectionEnd)
-        if (e.key==="ArrowLeft") {
-            let cursorPos = e.target.selectionStart;
-            const spaces = this.getSpaces().filter(pos => pos<cursorPos);
-            cursorPos = spaces[spaces.length-1] || cursorPos+1
-
-            this.textArea.selectionStart=cursorPos;
-        }
-        if (e.key==="ArrowRight") {
-            let cursorPos = e.target.selectionStart;
-            const spaces = this.getSpaces().filter(pos => pos>cursorPos);
-            cursorPos = spaces[0]-1 //|| cursorPos-1
-
-            this.textArea.selectionStart=cursorPos;
+        if (e.key === "ArrowLeft") {
+            this.handleArrowLeft(e);
         }
 
-        if (e.key.match(/[0-9]/)){
+        if (e.key === "ArrowRight") {
+            this.handleArrowright(e);
+        }
+        
+        if (e.key.match(/[0-9]/)) {
+            let cursorPos = e.target.selectionStart
+            const spaces = this.getSpaces();
+            let outputIndex = spaces.indexOf(cursorPos)
+
+            if(outputIndex === -1){
+                const reducedSpaces = spaces.map((pos,i) => {
+                        return {
+                            pos: pos,
+                            i: i
+                        }
+                    }).filter(obj => obj.pos > cursorPos)
+                cursorPos = reducedSpaces[0].pos
+                outputIndex = reducedSpaces[0].i
+            }
+            this.textArea.selectionStart = cursorPos;
+            outputIndex--;
+            console.log('curpos', cursorPos, outputIndex)
             this.props.expandNumericInput(e.key)
-        } else if (e.key === "Backspace" || e.key === "Delete") {
-            console.log(e.key,e.target.selectionStart, e.target.selectionEnd)
         }
+    }
+
+    handleArrowLeft = e => {
+        let cursorPos = e.target.selectionStart;
+        const spaces = this.getSpaces().filter(pos => pos<cursorPos);
+        cursorPos = spaces[spaces.length-1];
+
+        this.textArea.selectionStart=cursorPos;
+    }
+
+    handleArrowright = e => {
+        let cursorPos = e.target.selectionStart;
+        const spaces = this.getSpaces().filter(pos => pos>cursorPos);
+        cursorPos = spaces[0]-1 //|| cursorPos-1
+
+        this.textArea.selectionStart=cursorPos;
     }
     
     render(){

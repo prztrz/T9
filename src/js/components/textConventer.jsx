@@ -41,8 +41,7 @@ class TextConventer extends React.Component {
         const suggestions = this.getSuggestions();
         const output = this.state.output.slice();
         if (splitted.length > 0) {
-            let currentOutput
-                currentOutput = suggestions[0] || (output[splitted.length-1] + lastInput[lastInput.length-1]) || '';
+            let currentOutput = suggestions[0] || (output[splitted.length-1] + lastInput[lastInput.length-1]) || '';
             output[splitted.length-1] = currentOutput;
         }
 
@@ -54,7 +53,6 @@ class TextConventer extends React.Component {
     }
 
     render(){
-        console.log(this.state.suggestions)
         return(
             <div className="textConventer">
                 <TextConventerOutput numericInput={this.state.numericInput} output={this.state.output} expandNumericInput={this.expandNumericInput}/>
