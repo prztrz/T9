@@ -41,6 +41,9 @@ class Trie {
     }
 
     getExpansions = (sequence,expansions,expansion,index,leaf) => {
+        if (sequence === '') {
+            return [];
+        }
         sequence = sequence.toString();
         expansions = expansions || [];
         expansion = expansion || ''
