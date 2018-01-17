@@ -15,12 +15,17 @@ class TextConventer extends React.Component {
         }
     }
 
-    updateNumericInput = key => {
-        if (key.match(/[0-9]/)) {
-            this.setState({
-                numericInput: this.state.numericInput+key,
-                splittedNumericInput: (this.state.numericInput+key).split("0")
-            }, this.updateOutput)
+    expandNumericInput = key => {
+        this.setState({
+            numericInput: this.state.numericInput+key,
+            splittedNumericInput: (this.state.numericInput+key).split("0")
+        }, this.updateOutput)
+    }
+
+    narrowNumericInput = (key, start, end) => {
+        let input = this.state.numericInput;
+        if (start !== end) {
+            
         }
     }
 
@@ -52,7 +57,7 @@ class TextConventer extends React.Component {
         console.log(this.state.suggestions)
         return(
             <div className="textConventer">
-                <TextConventerOutput output={this.state.output} updateNumericInput={this.updateNumericInput}/>
+                <TextConventerOutput numericInput={this.state.numericInput} output={this.state.output} expandNumericInput={this.expandNumericInput}/>
                 {/* <TextConventerContoller /> */}
             </div>
         );
