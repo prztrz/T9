@@ -4,7 +4,9 @@ class Content extends React.Component {
     render(){
         return(
             <main className="sectionMain">
-                <TextConventer />
+                <div className="container">
+                    <TextConventer />
+                </div>
             </main>
         );
     }
