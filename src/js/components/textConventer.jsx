@@ -14,11 +14,24 @@ class TextConventer extends React.Component {
             splittedNumericInput: [],
             currentInputIndex: 0,
             suggestions: [],
-            activeSuggestion: 0
+            activeSuggestion: 0,
+            cursorPosition: 0
         }
     }
-   
-    expandNumericInput = (key, pos, currentInput) => {
+    
+    setCursorPosition = pos => {
+        this.setState({
+            cursorPosition: pos
+        })
+    }
+
+    inputFromKeyboard = (key) => {
+        const pos = this.state.cursorPosition;
+        const currentInput = this.state.currentInputIndex;
+        this.expandNumericInput(key, pos, currentInput, true);
+    }
+
+    expandNumericInput = (key, pos, currentInput, isfromKeyboard) => {
         let input = this.state.numericInput;
         if (pos >= input.length) {
             input += key;
@@ -28,7 +41,9 @@ class TextConventer extends React.Component {
         this.setState({
             numericInput: input,
             splittedNumericInput: input.split("0"),
-            currentInputIndex: currentInput
+            currentInputIndex: currentInput,
+            cursorPosition: isfromKeyboard ? this.state.cursorPosition+1 : this.state.cursorPosition,
+            currentInputIndex: isfromKeyboard && key === '0' ? this.state.currentInputIndex + 1 : this.state.currentInputIndex
         }, this.updateOutput)
     }
 
@@ -97,10 +112,17 @@ class TextConventer extends React.Component {
     }
 
     render(){
+        
         return(
             <div className="textConventer">
-                <TextConventerOutput numericInput={this.state.numericInput} output={this.state.output} expandNumericInput={this.expandNumericInput} narrowNumericInput={this.narrowNumericInput}/>
-                <TextConventerControler suggestions={this.state.suggestions} activeSuggestion={this.state.activeSuggestion} switchOutput={this.switchOutput}/>
+                <TextConventerOutput 
+                    numericInput={this.state.numericInput} 
+                    output={this.state.output} 
+                    expandNumericInput={this.expandNumericInput} 
+                    narrowNumericInput={this.narrowNumericInput}
+                    setCursorPosition={this.setCursorPosition}
+                />
+                <TextConventerControler suggestions={this.state.suggestions} activeSuggestion={this.state.activeSuggestion} switchOutput={this.switchOutput} inputFromKeyboard={this.inputFromKeyboard}/>
             </div>
         );
     }

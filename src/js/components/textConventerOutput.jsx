@@ -36,6 +36,10 @@ class TextConventerOutput extends React.Component {
        return spaces;
     }
 
+    handleClick = () => {
+        console.log(this.textArea.selectionStart)
+    }
+
     handleKeyDown = e => {
         if (e.key === "ArrowLeft") {
             this.handleArrowLeft(e);
@@ -50,8 +54,11 @@ class TextConventerOutput extends React.Component {
         }
 
         if (e.key==="Backspace" || e.key==="Delete") {
-            const outputIndex = this.getOutputParams(e).output;
+            const params = this.getOutputParams(e)
+            const outputIndex = params.output;
+            const position = params.pos-1 > 0 ? params.pos-1 : 0;
             this.props.narrowNumericInput(e.key, this.textArea.selectionStart, this.textArea.selectionEnd, outputIndex)
+            this.props.setCursorPosition(position);
         }
     }
 
@@ -61,6 +68,7 @@ class TextConventerOutput extends React.Component {
         cursorPos = spaces[spaces.length-1];
 
         this.textArea.selectionStart=cursorPos;
+        this.props.setCursorPosition(cursorPos);
     }
 
     handleArrowright = e => {
@@ -69,6 +77,7 @@ class TextConventerOutput extends React.Component {
         cursorPos = spaces[0]-1 //|| cursorPos-1
 
         this.textArea.selectionStart=cursorPos;
+        this.props.setCursorPosition(cursorPos);
     }
 
 
@@ -79,6 +88,7 @@ class TextConventerOutput extends React.Component {
 
         console.log('curpos', cursorPos, outputIndex)
         this.props.expandNumericInput(e.key, cursorPos,outputIndex)
+        this.props.setCursorPosition(cursorPos+1);
     }
 
     getOutputParams = e => {
@@ -105,6 +115,8 @@ class TextConventerOutput extends React.Component {
     }
     
     render(){
+        if (this.textArea)
+        console.log(this.textArea.selectionStart || "xx");
         return(
             <div className="textConventer__output">
                 <div className="textConventer__inputGroup">
@@ -114,6 +126,7 @@ class TextConventerOutput extends React.Component {
                         id="textConventer__input" 
                         value={this.state.output.length > 0 ? this.state.output.reduce((prev,curr) => `${prev} ${curr}`) : ''}
                         onKeyDown={this.handleKeyDown}
+                        onClick={this.handleClick}
                         ref={t => this.textArea = t}
                     />
                 </div>
