@@ -19,6 +19,8 @@ class TextConventerOutput extends React.Component {
         if (this.state.numericInput !== nextProps.numericInput)
             this.setState({
                 numericInput: nextProps.numericInput
+            }, () => {
+                this.textArea.selectionStart = this.cursorPos
             })
     }
 
@@ -35,7 +37,6 @@ class TextConventerOutput extends React.Component {
     }
 
     handleKeyDown = e => {
-        console.log(e.key,e.target.selectionStart, e.target.selectionEnd)
         if (e.key === "ArrowLeft") {
             this.handleArrowLeft(e);
         }
@@ -45,24 +46,12 @@ class TextConventerOutput extends React.Component {
         }
         
         if (e.key.match(/[0-9]/)) {
-            let cursorPos = e.target.selectionStart
-            const spaces = this.getSpaces();
-            let outputIndex = spaces.indexOf(cursorPos)
+            this.handleInput(e)
+        }
 
-            if(outputIndex === -1){
-                const reducedSpaces = spaces.map((pos,i) => {
-                        return {
-                            pos: pos,
-                            i: i
-                        }
-                    }).filter(obj => obj.pos > cursorPos)
-                cursorPos = reducedSpaces[0].pos
-                outputIndex = reducedSpaces[0].i
-            }
-            this.textArea.selectionStart = cursorPos;
-            outputIndex--;
-            console.log('curpos', cursorPos, outputIndex)
-            this.props.expandNumericInput(e.key)
+        if (e.key==="Backspace" || e.key==="Delete") {
+            const outputIndex = this.getOutputParams(e).output;
+            this.props.narrowNumericInput(e.key, this.textArea.selectionStart, this.textArea.selectionEnd, outputIndex)
         }
     }
 
@@ -81,9 +70,41 @@ class TextConventerOutput extends React.Component {
 
         this.textArea.selectionStart=cursorPos;
     }
+
+
+    handleInput = e => {
+        const params = this.getOutputParams(e);
+        const cursorPos = params.pos;
+        const outputIndex = params.output;
+
+        console.log('curpos', cursorPos, outputIndex)
+        this.props.expandNumericInput(e.key, cursorPos,outputIndex)
+    }
+
+    getOutputParams = e => {
+        let cursorPos = e.target.selectionStart
+        const spaces = this.getSpaces();
+        let outputIndex = spaces.indexOf(cursorPos)
+
+        if(outputIndex === -1){
+            const reducedSpaces = spaces.map((pos,i) => {
+                    return {
+                        pos: pos,
+                        i: i
+                    }
+                }).filter(obj => obj.pos > cursorPos)
+            cursorPos = reducedSpaces[0].pos
+            outputIndex = reducedSpaces[0].i
+        }
+        
+        (outputIndex > 0 && e.key !== "0")&& outputIndex--;
+        return {
+            pos: cursorPos,
+            output: outputIndex
+        }
+    }
     
     render(){
-        console.log(this.state.output)
         return(
             <div className="textConventer__output">
                 <div className="textConventer__inputGroup">

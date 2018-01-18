@@ -14,38 +14,67 @@ class TextConventer extends React.Component {
             suggestions: []
         }
     }
-
-    expandNumericInput = key => {
+   
+    expandNumericInput = (key, pos, currentInput) => {
+        let input = this.state.numericInput;
+        if (pos >= input.length) {
+            input += key;
+        } else {
+            input = `${input.substr(0,pos)}${key}${input.substr(pos)}`
+        }
         this.setState({
-            numericInput: this.state.numericInput+key,
-            splittedNumericInput: (this.state.numericInput+key).split("0")
-        }, this.updateOutput)
+            numericInput: input,
+            splittedNumericInput: input.split("0")
+        }, () => {
+            this.updateOutput(currentInput)
+        })
     }
 
-    narrowNumericInput = (key, start, end) => {
+    narrowNumericInput = (key, start, end, currentInput) => {
         let input = this.state.numericInput;
         if (start !== end) {
-            
+            input = input.substr(0,start) + input.substr(end)
+        } else {
+            if (key==="Backspace") {
+                input = input.substr(0,start-1) + input.substr(start);
+            }
+
+            if (key==="Delete") {
+                input = input.substr(0,start) + input.substr(start+1);
+            }
         }
+        this.setState({
+            numericInput: input,
+            splittedNumericInput: input.split("0")
+        }, () => {
+            this.updateOutput(currentInput, true)
+        })
     }
 
-    getSuggestions = () => {
-        const lastInput = this.state.splittedNumericInput[this.state.splittedNumericInput.length -1];
-        return this.trie.getExpansions(lastInput);
+    getSuggestions = input => {
+        return this.trie.getExpansions(input);
     }
 
-    updateOutput = () => {
+    updateOutput = (inputIndex, isDeleting) => {
         const input = this.state.numericInput;
         const splitted = this.state.splittedNumericInput;
-        const lastInput = splitted[splitted.length -1];
-        const suggestions = this.getSuggestions();
+        const currentInput = splitted[inputIndex];
         const output = this.state.output.slice();
-        if (splitted.length > 0) {
-            let currentOutput = suggestions[0] || (output[splitted.length-1] + lastInput[lastInput.length-1]) || '';
-            output[splitted.length-1] = currentOutput;
-        }
+        const suggestions = currentInput === undefined ? [] : this.getSuggestions(currentInput);
 
-       
+        if (!currentInput && isDeleting) {
+            output.pop();
+        } else {
+            if (input.length > 0) {
+                let currentOutput = suggestions[0] || (output[inputIndex] + currentInput[currentInput.length-1]) || '';
+                output[inputIndex] = currentOutput;
+                if (isDeleting && output[inputIndex + 1] === "") {
+                    output.pop();
+                }
+            } else {
+                output.length = 0;
+            }
+        }
         this.setState({
             output: output,
             suggestions: suggestions
@@ -55,7 +84,7 @@ class TextConventer extends React.Component {
     render(){
         return(
             <div className="textConventer">
-                <TextConventerOutput numericInput={this.state.numericInput} output={this.state.output} expandNumericInput={this.expandNumericInput}/>
+                <TextConventerOutput numericInput={this.state.numericInput} output={this.state.output} expandNumericInput={this.expandNumericInput} narrowNumericInput={this.narrowNumericInput}/>
                 {/* <TextConventerContoller /> */}
             </div>
         );
