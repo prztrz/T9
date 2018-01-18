@@ -1,5 +1,6 @@
 import React from "react";
-import {TextConventerOutput} from './TextConventerOutput.jsx'
+import {TextConventerOutput} from './textConventerOutput.jsx'
+import {TextConventerControler} from './textConventerControler.jsx'
 import Trie from './../classes/trie';
 import words from 'an-array-of-english-words';
 
@@ -11,7 +12,8 @@ class TextConventer extends React.Component {
             output: [],
             numericInput: '',
             splittedNumericInput: [],
-            suggestions: []
+            suggestions: [],
+            activeSuggestion: 0
         }
     }
    
@@ -85,7 +87,7 @@ class TextConventer extends React.Component {
         return(
             <div className="textConventer">
                 <TextConventerOutput numericInput={this.state.numericInput} output={this.state.output} expandNumericInput={this.expandNumericInput} narrowNumericInput={this.narrowNumericInput}/>
-                {/* <TextConventerContoller /> */}
+                <TextConventerControler suggestions={this.state.suggestions} activeSuggestion={this.state.activeSuggestion}/>
             </div>
         );
     }
