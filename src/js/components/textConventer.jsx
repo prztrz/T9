@@ -26,12 +26,14 @@ class TextConventer extends React.Component {
     }
 
     inputFromKeyboard = (key) => {
+        //handles input made from ux virtual keyboard
         const pos = this.state.cursorPosition;
         const currentInput = this.state.currentInputIndex;
         this.expandNumericInput(key, pos, currentInput, true);
     }
 
     expandNumericInput = (key, pos, currentInput, isfromKeyboard) => {
+        //adds value to numeric input string (state.numericInput) on specified position
         let input = this.state.numericInput;
         if (pos >= input.length) {
             input += key;
@@ -44,10 +46,11 @@ class TextConventer extends React.Component {
             currentInputIndex: currentInput,
             cursorPosition: isfromKeyboard ? this.state.cursorPosition+1 : this.state.cursorPosition,
             currentInputIndex: isfromKeyboard && key === '0' ? this.state.currentInputIndex + 1 : this.state.currentInputIndex
-        }, this.updateOutput)
+        }, this.updateOutput) //after updating the state run update output to get decoded word from numeric string
     }
 
     narrowNumericInput = (key, start, end, currentInput) => {
+        //removes value from numeric input string (state.numericInput)
         let input = this.state.numericInput;
         if (start !== end) {
             input = input.substr(0,start) + input.substr(end)
@@ -65,6 +68,7 @@ class TextConventer extends React.Component {
             splittedNumericInput: input.split("0"),
             currentInputIndex: currentInput
         }, () => {
+            //after updating numeric input run updateOutput to get decoded word from numeric string
             this.updateOutput(true)
         })
     }
@@ -79,18 +83,23 @@ class TextConventer extends React.Component {
         const splitted = this.state.splittedNumericInput;
         const currentInput = splitted[inputIndex];
         const output = this.state.output.slice();
+        //if the last char in current input (from state.splittedNumericInput) the operation is made on was deleted this input becomes undefined (it is not appearing anymore in splittedNumericInput array) - therefore instead of runing getSuggestion method suggestions are become empty array
         const suggestions = currentInput === undefined ? [] : this.getSuggestions(currentInput);
 
+        //if current input is undefined (false) and current operation is deleting (using backspace) pop the last element from state.outputArray.
         if (!currentInput && isDeleting) {
             output.pop();
         } else {
             if (input.length > 0) {
                 let currentOutput = suggestions[0] || (output[inputIndex] + currentInput[currentInput.length-1]) || '';
                 output[inputIndex] = currentOutput;
+
+                // if next input is next output is empty string and current operation is deleting (using Delete key) remove last element form output array
                 if (isDeleting && output[inputIndex + 1] === "") {
                     output.pop();
                 }
             } else {
+                //if all characters are removed from numeric input clear output array
                 output.length = 0;
             }
         }

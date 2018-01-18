@@ -25,6 +25,7 @@ class TextConventerOutput extends React.Component {
     }
 
     getSpaces = () => {
+       //returns array with 0, all indexes of "0" in numeric input" and length on numeric input 
        let input = this.state.numericInput;
        const spaces = [0]; 
        for (let i=0; i<input.length; i++){
@@ -57,9 +58,10 @@ class TextConventerOutput extends React.Component {
     handleDelete = e => {
         const params = this.getOutputParams(e)
         const outputIndex = params.output;
-        const position = params.pos-1 > 0 ? params.pos-1 : 0;
+        const position = params.pos
         this.props.narrowNumericInput(e.key, this.textArea.selectionStart, this.textArea.selectionEnd, outputIndex)
-        this.props.setCursorPosition(position);
+        //set cursor position after handling deleting (position-1 if Backspace and position if Delete)
+        let posAfterDel = e.key==="Delete"
     }
 
     handleArrowLeft = e => {
@@ -88,10 +90,12 @@ class TextConventerOutput extends React.Component {
 
         console.log('curpos', cursorPos, outputIndex)
         this.props.expandNumericInput(e.key, cursorPos,outputIndex)
+        //set cursor position after input is handled on the textArea i.e. cursor position + 1
         this.props.setCursorPosition(cursorPos+1);
     }
 
     getOutputParams = e => {
+        // returns object with cursor position (pos prop) and index of current input in splittedNumericInput array (output prop)
         let cursorPos = e.target.selectionStart
         const spaces = this.getSpaces();
         let outputIndex = spaces.indexOf(cursorPos)
@@ -115,8 +119,6 @@ class TextConventerOutput extends React.Component {
     }
     
     render(){
-        if (this.textArea)
-        console.log(this.textArea.selectionStart || "xx");
         return(
             <div className="textConventer__output">
                 <div className="textConventer__inputGroup">
