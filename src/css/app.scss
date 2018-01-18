@@ -46,8 +46,10 @@
     overflow: auto;
 }
 
-.textConventer__suggestion {
-    text-align: center;   
+.textConventer__suggestion,
+.textConventer__suggestion--active {
+    text-align: center;
+    cursor: pointer;   
 }
 
 .textConventer__suggestion--active {

@@ -12,6 +12,7 @@ class TextConventer extends React.Component {
             output: [],
             numericInput: '',
             splittedNumericInput: [],
+            currentInputIndex: 0,
             suggestions: [],
             activeSuggestion: 0
         }
@@ -26,10 +27,9 @@ class TextConventer extends React.Component {
         }
         this.setState({
             numericInput: input,
-            splittedNumericInput: input.split("0")
-        }, () => {
-            this.updateOutput(currentInput)
-        })
+            splittedNumericInput: input.split("0"),
+            currentInputIndex: currentInput
+        }, this.updateOutput)
     }
 
     narrowNumericInput = (key, start, end, currentInput) => {
@@ -47,9 +47,10 @@ class TextConventer extends React.Component {
         }
         this.setState({
             numericInput: input,
-            splittedNumericInput: input.split("0")
+            splittedNumericInput: input.split("0"),
+            currentInputIndex: currentInput
         }, () => {
-            this.updateOutput(currentInput, true)
+            this.updateOutput(true)
         })
     }
 
@@ -57,7 +58,8 @@ class TextConventer extends React.Component {
         return this.trie.getExpansions(input);
     }
 
-    updateOutput = (inputIndex, isDeleting) => {
+    updateOutput = (isDeleting) => {
+        const inputIndex = this.state.currentInputIndex;
         const input = this.state.numericInput;
         const splitted = this.state.splittedNumericInput;
         const currentInput = splitted[inputIndex];
@@ -79,7 +81,18 @@ class TextConventer extends React.Component {
         }
         this.setState({
             output: output,
-            suggestions: suggestions
+            suggestions: suggestions,
+            activeSuggestion: 0
+        })
+    }
+
+    switchOutput = (text, suggestionIndex) => {
+        const inputIndex = this.state.currentInputIndex;
+        const output = this.state.output.slice();
+        output[inputIndex] = text;
+        this.setState({
+            output: output,
+            activeSuggestion: suggestionIndex,
         })
     }
 
@@ -87,7 +100,7 @@ class TextConventer extends React.Component {
         return(
             <div className="textConventer">
                 <TextConventerOutput numericInput={this.state.numericInput} output={this.state.output} expandNumericInput={this.expandNumericInput} narrowNumericInput={this.narrowNumericInput}/>
-                <TextConventerControler suggestions={this.state.suggestions} activeSuggestion={this.state.activeSuggestion}/>
+                <TextConventerControler suggestions={this.state.suggestions} activeSuggestion={this.state.activeSuggestion} switchOutput={this.switchOutput}/>
             </div>
         );
     }
