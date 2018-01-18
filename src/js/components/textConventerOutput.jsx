@@ -36,10 +36,6 @@ class TextConventerOutput extends React.Component {
        return spaces;
     }
 
-    handleClick = () => {
-        console.log(this.textArea.selectionStart)
-    }
-
     handleKeyDown = e => {
         if (e.key === "ArrowLeft") {
             this.handleArrowLeft(e);
@@ -54,12 +50,16 @@ class TextConventerOutput extends React.Component {
         }
 
         if (e.key==="Backspace" || e.key==="Delete") {
-            const params = this.getOutputParams(e)
-            const outputIndex = params.output;
-            const position = params.pos-1 > 0 ? params.pos-1 : 0;
-            this.props.narrowNumericInput(e.key, this.textArea.selectionStart, this.textArea.selectionEnd, outputIndex)
-            this.props.setCursorPosition(position);
+            this.handleDelete(e)
         }
+    }
+
+    handleDelete = e => {
+        const params = this.getOutputParams(e)
+        const outputIndex = params.output;
+        const position = params.pos-1 > 0 ? params.pos-1 : 0;
+        this.props.narrowNumericInput(e.key, this.textArea.selectionStart, this.textArea.selectionEnd, outputIndex)
+        this.props.setCursorPosition(position);
     }
 
     handleArrowLeft = e => {
@@ -74,7 +74,7 @@ class TextConventerOutput extends React.Component {
     handleArrowright = e => {
         let cursorPos = e.target.selectionStart;
         const spaces = this.getSpaces().filter(pos => pos>cursorPos);
-        cursorPos = spaces[0]-1 //|| cursorPos-1
+        cursorPos = spaces[0]-1 
 
         this.textArea.selectionStart=cursorPos;
         this.props.setCursorPosition(cursorPos);
